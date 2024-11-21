@@ -3,10 +3,18 @@ from discord.ext import commands
 import sqlite3
 from datetime import datetime, timedelta
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+discord_token = os.getenv("DISCORD_TOKEN")
+database_url = os.getenv("DATABASE_URL")
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-conn = sqlite3.connect("voice_tracking.db")
+conn = sqlite3.connect(database_url)
 cursor = conn.cursor()
 
 cursor.execute(
@@ -169,5 +177,4 @@ async def resenha(ctx):
 
     await ctx.send(embed=embed)
 
-
-bot.run("MTMwODI3Nzc3Mzg2MDYwNjA3Mw.G-PMeQ.fLn_cvdIUAZ597_j-8Tjb4BQMAadmvnJGarW5I")
+bot.run(discord_token)
