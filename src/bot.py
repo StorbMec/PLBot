@@ -6,6 +6,7 @@ from discord.ext import commands
 from datetime import datetime
 from dotenv import load_dotenv
 from database import Database
+from utils.colors import ERROR_COLOR
 
 # carrega variaveis de ambiente
 load_dotenv()
@@ -27,17 +28,20 @@ db = Database(database_url)
 bot.db = db
 bot.active_calls = active_calls
 
+
 @bot.event
 async def on_ready():
     print(f"\nBot conectado como {bot.user}")
-    
+
     # carregando os comandos
     await commands_loader.load_commands(bot)
-    
-@bot.event    
+
+
+@bot.event
 async def on_close():
     db.close()
     print("Conexão com o banco de dados encerrada")
+
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -56,11 +60,21 @@ async def on_voice_state_update(member, before, after):
         join_time = active_calls.pop(member.id, None)
         if join_time and len(before.channel.members) > 0:
             total_time = (datetime.now() - join_time).total_seconds()
-            
+
             db.insert_voice_activity(member.id, total_time)
-            
+
             print(
                 f"\nUsuário {member.name} parou de ser contabilizado. Tempo acumulado: {int(total_time)} segundos."
             )
+
+
+@bot.event
+async def on_command_error(ctx, e):
+    embed = discord.Embed(color=ERROR_COLOR)
+    embed.add_field(name="Comando não encontrado 😢🥛", value="", inline=False)
+    embed.set_footer(text="Use !comandos para verificar os comandos disponíveis")
+
+    await ctx.send(embed=embed)
+
 
 bot.run(discord_token)
