@@ -4,15 +4,14 @@ from datetime import datetime
 from utils.format import format_time
 from utils.colors import SUCCESS_COLOR, WARNING_COLOR
 
-
 class Resenha(commands.Cog):
-  def __init__(self, bot, db, active_calls):
-    self.bot = bot
-    self.db = db
-    self.active_calls = active_calls
+    def __init__(self, bot, db, active_calls):
+        self.bot = bot
+        self.db = db
+        self.active_calls = active_calls
     
-  @commands.command(name="resenha")
-  async def get_current_call_ranking(self, ctx):
+    @commands.command(name="resenha")
+    async def get_current_call_ranking(self, ctx):
         if not self.active_calls:
             embed = discord.Embed(
                 title="Ranking da Resenha",
